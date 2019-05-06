@@ -24,3 +24,24 @@ same type delivered later on with different file dates and from different groups
         iv. Risk Score
         v. File date
      b. Only include records in which the patients risk has increased.
+
+
+Notes from Caitlin Johnson:
+
+1. The file 'etl_process.py' contains the script for completing the above exercise; all SQL Server queries were put in
+the 'queries.py' file as an effort to declutter the main script file.
+
+2. The 'requirements.txt' file contains the modules/versions needed for the main script; however, I believe it would be
+beneficial to provide context to the setup used for this coding assessment in case if it helps explain any caveats.
+
+    a. SQL: Given that a Mac OS was utilized, Microsoft SQL Server 2017 was installed and deployed on a Docker container,
+    which was then connected to Azure Data Studio.
+
+    b. Python: PyCharm IDE was utilized for the Python portion of the exercise, which relied on 'pyodbc' for the connection
+    to SQL Server on the Docker container. The following environment variables are required to be defined for the connection
+    to be successful: DRIVER, PORT, DSN, USER, PWD. Depending on your setup, the environment variables may not be necessary.
+
+3. The following files are associated with the testing scripts: 'test.py' and 'Fake Family Medicine 050119.xlsx'. I aim
+for at least 80% code coverage; however, given the minimal documentation on how to test mock pyodbc connections, I could
+not provide as much test coverage as I would have liked. I have experiences writing unittests that mock connections
+to Snowflake and Postgres databases, for which I would assert that the mock connections were called as appropriate.
