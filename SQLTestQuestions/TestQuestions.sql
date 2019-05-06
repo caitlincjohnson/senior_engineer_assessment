@@ -20,9 +20,24 @@ Any patients that dont have a risk level should also be included in the results.
 
 **********************/
 
-
-
-
+SELECT 
+    PersonName
+    ,r3.risk RiskLevel
+FROM dbo.Person p
+LEFT JOIN (
+SELECT r1.PersonID id, r2.MaxRiskDateTime, r1.RiskLevel risk
+FROM dbo.Risk r1
+INNER JOIN (
+    SELECT
+        PersonID
+        ,MAX(RiskDateTime) MaxRiskDateTime
+    FROM dbo.Risk
+    GROUP BY PersonID
+) r2
+ON r1.PersonID = r2.PersonID
+AND r1.RiskDateTime = r2.MaxRiskDateTime
+) r3
+ON p.PersonID = r3.id
 
 /**********************
 
@@ -36,7 +51,26 @@ or be blank if no nickname exists.
 
 **********************/
 
-
+SELECT
+    PersonName
+    ,IIF(
+        PersonName LIKE '%[(]%[A-Za-z]%[)]%'
+        ,LTRIM(RTRIM(CONCAT((LTRIM(RTRIM(SUBSTRING(PersonName,1,CHARINDEX('(', PersonName) - 1)))),' ',(LTRIM(RTRIM(SUBSTRING(PersonName,CHARINDEX(')', PersonName) + 1, LEN(PersonName))))))))
+        ,IIF(
+            PersonName LIKE '%[(]%[^A-Za-z]%[)]%'
+            ,REPLACE(
+                PersonName
+                ,SUBSTRING(PersonName, CHARINDEX('(', PersonName) - 1, LEN(PersonName))
+                ,'')
+            ,PersonName
+            )
+    ) as FullName
+    ,IIF(
+        PersonName like '%[(]%[A-Za-z]%[)]%'
+        ,SUBSTRING(PersonName,CHARINDEX('(', PersonName) + 1,CHARINDEX(')', PersonName) - CHARINDEX('(', PersonName) - 1)
+        ,null
+    ) as Nickname
+FROM dbo.Person
 
 /**********************
 
@@ -47,6 +81,14 @@ and a moving average of risk for that patient and payer in dbo.Risk.
 
 **********************/
 
-
-
-
+SELECT
+    r.PersonID
+    ,p.PersonName
+    ,AttributedPayer
+    ,RiskScore
+    ,AVG(RiskScore) OVER (PARTITION BY r.PersonId, AttributedPayer ORDER BY RiskDateTime) AS MovingAverage
+    ,RiskLevel
+    ,RiskDateTime
+FROM dbo.Risk r
+JOIN dbo.Person p ON p.PersonID = r.PersonID
+ORDER BY r.PersonID
