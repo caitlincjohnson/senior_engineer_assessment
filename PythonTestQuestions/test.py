@@ -1,6 +1,7 @@
 import unittest
 import etl_process as etl
 import datetime
+import pandas as pd
 
 
 class TestETLProcess(unittest.TestCase):
@@ -41,20 +42,20 @@ class TestETLProcess(unittest.TestCase):
 
 
     def test_transform_demographics(self):
-        test_data = {
-            'ID': 12275,
-            'First Name': 'Jane',
-            'Middle Name': 'Christine',
-            'Last Name': 'Doe',
-            'DOB[1]': datetime.datetime.strptime('1987-11-18 00:00:00','%Y-%m-%d %H:%M:%S'),
-            'Sex': 0,
-            'Favorite Color': 'Blue',
-            'Attributed Q1': 'Yes',
-            'Attributed Q2': 'Yes',
-            'Risk Q1': 0.4445286866540108,
-            'Risk Q2 ': 0.4625272036310827,
-            'Risk Increased Flag': 'Yes'
-        }
+        test_data = { 'test_row': [
+            12275,
+            'Jane',
+            'Christine',
+            'Doe',
+            datetime.datetime.strptime('1987-11-18 00:00:00','%Y-%m-%d %H:%M:%S'),
+            0,
+            'Blue',
+            'Yes',
+            'Yes',
+            0.4445286866540108,
+            0.4625272036310827,
+            'Yes'
+        ]}
         expected_dataframe = {
             'ID': 12275,
             'First Name': 'Jane',
@@ -65,7 +66,9 @@ class TestETLProcess(unittest.TestCase):
             'Favorite Color': 'Blue'
         }
 
-        result = etl.transform_demographics(test_data)
+        test_df = pd.DataFrame.from_dict(test_data, orient='index', columns=['ID', 'First Name', 'Middle Name', 'Last Name', 'DOB[1]', 'Sex'
+            , 'Favorite Color', 'Attributed Q1', 'Attributed Q2', 'Risk Q1', 'Risk Q2', 'Risk Increased Flag'])
+        result = etl.transform_demographics(test_df)
 
         self.assertEqual(result['ID'][0], expected_dataframe['ID'])
         self.assertEqual(result['First Name'][0], expected_dataframe['First Name'])
@@ -77,20 +80,20 @@ class TestETLProcess(unittest.TestCase):
 
 
     def test_transform_riskquarter(self):
-        test_data = {
-            'ID': 12275,
-            'First Name': 'Jane',
-            'Middle Name': 'Christine',
-            'Last Name': 'Doe',
-            'DOB[1]': datetime.datetime.strptime('1987-11-18 00:00:00','%Y-%m-%d %H:%M:%S'),
-            'Sex': 0,
-            'Favorite Color': 'Blue',
-            'Attributed Q1': 'Yes',
-            'Attributed Q2': 'Yes',
-            'Risk Q1': 0.4445286866540108,
-            'Risk Q2 ': 0.4625272036310827,
-            'Risk Increased Flag': 'Yes'
-        }
+        test_data = {'test_row': [
+            12275,
+            'Jane',
+            'Christine',
+            'Doe',
+            datetime.datetime.strptime('1987-11-18 00:00:00', '%Y-%m-%d %H:%M:%S'),
+            0,
+            'Blue',
+            'Yes',
+            'Yes',
+            0.4445286866540108,
+            0.4625272036310827,
+            'Yes'
+        ]}
         expected_dataframe = {
             0: {
                 'ID': 12275,
@@ -106,7 +109,11 @@ class TestETLProcess(unittest.TestCase):
             }
         }
 
-        result = etl.transform_riskquarter(test_data)
+        test_df = pd.DataFrame.from_dict(test_data, orient='index',
+                                         columns=['ID', 'First Name', 'Middle Name', 'Last Name', 'DOB[1]', 'Sex'
+                                             , 'Favorite Color', 'Attributed Q1', 'Attributed Q2', 'Risk Q1', 'Risk Q2 ',
+                                                  'Risk Increased Flag'])
+        result = etl.transform_riskquarter(test_df)
 
         self.assertEqual(result['ID'][0], expected_dataframe[0]['ID'])
         self.assertEqual(result['Quarter'][0], expected_dataframe[0]['Quarter'])
