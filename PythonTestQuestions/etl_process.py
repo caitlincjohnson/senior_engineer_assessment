@@ -33,7 +33,7 @@ def transform_demographics(data):
     """
     logging.info('Transforming Demographic data')
     df_demographics = pd.DataFrame(data, columns=['ID', 'First Name', 'Middle Name', 'Last Name', 'DOB[1]', 'Sex',
-                                                  'Favorite Color'], index=[0])
+                                                  'Favorite Color'])
     logging.info('Replacing the Sex values with M for 0 and F for 1')
     df_demographics['Sex'] = df_demographics['Sex'].map({0: 'M', 1: 'F'})
     logging.info('Replacing existing middle names with the first initial only')
@@ -51,11 +51,9 @@ def transform_riskquarter(data):
     """
     logging.info('Transforming RiskByQuarter data')
     df_quarters_risk_quarters = pd.DataFrame(data
-                                             , columns=['ID', 'Risk Q1', 'Risk Q2 ', 'Risk Increased Flag']
-                                             , index=[0])
+                                             , columns=['ID', 'Risk Q1', 'Risk Q2 ', 'Risk Increased Flag'])
     df_quarters_risk_scores = pd.DataFrame(data
-                                           , columns=['ID', 'Attributed Q1', 'Attributed Q2', 'Risk Increased Flag']
-                                           , index=[0])
+                                           , columns=['ID', 'Attributed Q1', 'Attributed Q2', 'Risk Increased Flag'])
     logging.info('Dropping all rows with a value of No for Risk Increased Flag')
     df_quarters_risk_quarters = df_quarters_risk_quarters[df_quarters_risk_quarters['Risk Increased Flag'] != ' No']
     df_quarters_risk_scores = df_quarters_risk_scores[df_quarters_risk_scores['Risk Increased Flag'] != ' No']
